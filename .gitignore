@@ -1,0 +1,5 @@
+# Vagrant
+.vagrant/
+# Files to exchange among nodes
+playbooks/*_ip
+playbooks/munge.key

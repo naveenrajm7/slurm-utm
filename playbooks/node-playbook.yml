@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Prepare Nodes
+    import_role:
+      name: common
+
+  - name: Copy munge key from controller via local
+    copy:
+      src: munge.key
+      dest: /etc/munge/munge.key
+      owner: munge
+      group: munge
+      mode: '0700'
+
+  - name: Enable and restart munge service
+    systemd:
+      name: munge
+      enabled: yes
+      state: restarted
+
+  - name: Copy Slurm config file
+    copy:
+      src: slurm.conf
+      dest: /etc/slurm/slurm.conf
+      owner: root
+      group: root
+      mode: '0644'
+  
+  - name: Enable and restart slurmd service
+    systemd:
+      name: slurmd
+      enabled: yes
+      state: restarted

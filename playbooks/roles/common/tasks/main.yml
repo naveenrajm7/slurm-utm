@@ -1,0 +1,29 @@
+---
+- name: Install common packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - munge
+    - libmunge2
+    - libmunge-dev
+    - slurm-wlm
+
+- name: Set permissions for munge directories
+  file:
+    path: "{{ item.path }}"
+    owner: munge
+    group: munge
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: /etc/munge, mode: '0700' }
+    - { path: /var/log/munge, mode: '0700' }
+    - { path: /var/lib/munge, mode: '0700' }
+    - { path: /run/munge, mode: '0755' }
+    - { path: /etc/munge/munge.key, mode: '0700' }
+
+- name: Enable and restart munge service
+  systemd:
+    name: munge
+    enabled: yes
+    state: restarted
